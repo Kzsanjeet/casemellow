@@ -3,6 +3,7 @@ import registerUser from "../../controllers/login-signup.controllers/signup.cont
 
 const registerRouter = express.Router();
 
+//for signUp
 registerRouter.route("/signup").post(registerUser)
 
 export default registerRouter
