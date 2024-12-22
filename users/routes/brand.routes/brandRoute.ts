@@ -1,5 +1,5 @@
 import express from "express";
-import addBrand from "../../controllers/brand.controllers/brandController";
+import addBrand from "../../controllers/brand/brandController";
 
 const brandRouter = express.Router();
 

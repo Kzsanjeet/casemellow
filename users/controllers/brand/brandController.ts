@@ -8,7 +8,6 @@ const addBrand = async(req:Request, res:Response):Promise<void> =>{
              res.status(404).json({success:false, message:"Please fill all the fields"});
              return
         }
-        
         const brand = await Brand.create({brandName});
         if(!brand){
              res.status(404).json({success:false, message:"Unable to create brand"});

@@ -5,7 +5,7 @@ import connectDb from "./dbConnect";
 import registerRouter from "./users/routes/user.routes/registerRoute";
 import loginRouter from "./users/routes/user.routes/loginRoute";
 import brandRouter from "./users/routes/brand.routes/brandRoute";
-import phoneModelRouter from "./users/routes/phoneModel.routes/phoneModelRoutes";
+import productRouter from "./users/routes/product.routes/productRoutes";
 
 dotenv.config()
 const app =  express()
@@ -26,7 +26,7 @@ app.use("/api/v1",
 )
 app.use("/api/v1/admin",
     brandRouter,
-    phoneModelRouter
+    productRouter
 )
 
 app.listen(port, () => {
