@@ -8,12 +8,18 @@ const addBrand = async(req:Request, res:Response):Promise<void> =>{
              res.status(404).json({success:false, message:"Please fill all the fields"});
              return
         }
-        const brand = await Brand.create({brandName});
-        if(!brand){
-             res.status(404).json({success:false, message:"Unable to create brand"});
-             return
+        const checkBrand = Brand.findOne({brandName});
+        if(!checkBrand){
+            const brand = await Brand.create({brandName});
+            if(!brand){
+                 res.status(404).json({success:false, message:"Unable to create brand"});
+                 return
+            }
+            res.status(200).json({success:true, message:"Added brand successfully",brand})
+           
+        }else{
+            res.status(404).json({success:false, message:"Brand already exists"});
         }
-        res.status(200).json({success:true, message:"Added brand successfully",brand})
     } catch (error) {
         console.log(error);
         res.status(400).json({success:false, message:"Internal server error"})

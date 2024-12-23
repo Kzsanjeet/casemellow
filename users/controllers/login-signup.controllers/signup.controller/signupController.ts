@@ -10,7 +10,7 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ success: false, message: "Please fill in all fields" });
       return;
     }
-
+    
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       res.status(400).json({ success: false, message: "User with this email already exists" });
@@ -26,7 +26,7 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
       number,
       password: hashedPassword,
     });
-    
+
     res.status(201).json({
       success: true,
       message: "User created successfully",
