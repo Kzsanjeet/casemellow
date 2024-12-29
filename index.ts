@@ -1,4 +1,4 @@
-import express, { Request, Response} from "express";
+import express, { Request, Response, urlencoded} from "express";
 import dotenv from "dotenv";
 
 import connectDb from "./dbConnect";
@@ -6,6 +6,7 @@ import registerRouter from "./users/routes/user.routes/registerRoute";
 import loginRouter from "./users/routes/user.routes/loginRoute";
 import brandRouter from "./users/routes/brand.routes/brandRoute";
 import productRouter from "./users/routes/product.routes/productRoutes";
+import offerRouter from "./users/routes/offer.routes/offerRoute";
 
 dotenv.config()
 const app =  express()
@@ -17,7 +18,7 @@ app.get("/",(req:Request, res:Response)=>{
 })
 
 app.use(express.json())
-// app.use(urlencoded())
+app.use(urlencoded({extended:true}))
 
 // routes
 app.use("/api/v1",
@@ -26,7 +27,8 @@ app.use("/api/v1",
 )
 app.use("/api/v1/admin",
     brandRouter,
-    productRouter
+    productRouter,
+    offerRouter
 )
 
 app.listen(port, () => {
