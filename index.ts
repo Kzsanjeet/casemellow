@@ -7,6 +7,7 @@ import loginRouter from "./users/routes/user.routes/loginRoute";
 import brandRouter from "./users/routes/brand.routes/brandRoute";
 import productRouter from "./users/routes/product.routes/productRoutes";
 import offerRouter from "./users/routes/offer.routes/offerRoute";
+import coverTypeRouter from "./users/routes/coverType.routes/coverTypeRouter";
 
 dotenv.config()
 const app =  express()
@@ -28,7 +29,8 @@ app.use("/api/v1",
 app.use("/api/v1/admin",
     brandRouter,
     productRouter,
-    offerRouter
+    offerRouter,
+    coverTypeRouter
 )
 
 app.listen(port, () => {
