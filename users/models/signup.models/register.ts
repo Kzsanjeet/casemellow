@@ -18,7 +18,7 @@ const registerUser = new Schema({
         required: true,
         minlength: 6 
     },
-    refreshToken:{
+    otp:{
         type:String,
         default:""
     }

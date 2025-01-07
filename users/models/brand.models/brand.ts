@@ -1,16 +1,17 @@
 import { Schema } from "mongoose";
 import mongoose from "mongoose";
 
-const addBrand = new Schema({
+const brandSchema = new Schema({
     brandName: { type: String, required: true },
     phoneModels: [
         {
             modelName: { type: String, required: true },
-            coverTypes: [{ type: mongoose.Schema.Types.ObjectId, ref: "CoverType" }],
+            coverTypes: {type:[String]},
         },
     ],
+    isActive:{type:Boolean, default:true},
 });
 
-const Brand = mongoose.model("Brand", addBrand);
+const Brand = mongoose.model("Brand", brandSchema);
 
 export default Brand;

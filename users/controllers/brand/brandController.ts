@@ -6,16 +6,10 @@ const addBrand = async (req: Request, res: Response): Promise<void> => {
         const { brandName, phoneModels } = req.body;
 
         if (!brandName || !phoneModels || !Array.isArray(phoneModels)) {
-            res.status(400).json({ success: false, message: "Please fill all required fields" });
+            res.status(404).json({ success: false, message: "Please fill all required fields" });
             return;
         }
-
-        const checkBrand = await Brand.findOne({ brandName });
-        if (checkBrand) {
-            res.status(400).json({ success: false, message: "Brand already exists" });
-            return;
-        }
-
+        
         // Check if any phone model already exists in this brand
         for (const phoneModel of phoneModels) {
             if (!phoneModel.modelName || !phoneModel.coverTypes) {

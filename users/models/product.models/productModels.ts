@@ -8,6 +8,7 @@ const productSchema = new Schema({
     productPrice: { type: Number, required: true },
     productImage: { type: String },
     productCategory: { type: String, required: true },
+    isActivate: {type:Boolean, default:false},
 });
 
 

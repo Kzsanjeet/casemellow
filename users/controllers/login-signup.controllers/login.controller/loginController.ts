@@ -20,29 +20,26 @@ const loginUser = async(req:Request,res:Response):Promise<void> =>{
             res.status(400).json({success:false, message:"Invalid password"})
             return
             }
-        const accessToken = jwt.sign({userId:user.name},process.env.ACCESS_SECRET_KEY as string)
-        const refreshToken = jwt.sign({userId:user.name},process.env.ACCESS_SECRET_KEY as string)
+        const accessToken = jwt.sign({userId:user._id},process.env.ACCESS_SECRET_KEY as string)
+
         if(!accessToken){
              res.status(400).json({success:false, message:"Failed to generate access token"})
              return
         }
-        if(!refreshToken){
-             res.status(400).json({success:false, message:"Failed to generate refresh token"})
-             return
-        }
-        res.cookie("accessToken",accessToken,{httpOnly:true,maxAge:5*60*60})
-        res.cookie("refreshToken",refreshToken,{httpOnly:true,maxAge:24*60*60})
+    
+        res.cookie("accessToken",accessToken,{httpOnly:true,maxAge:24*60*60})
         
-        user.refreshToken = refreshToken;
-        await user.save();
-
-        res.json({success:true, message:"Logged in successfully",accessToken,refreshToken})
+        res.json({success:true, message:"Logged in successfully",accessToken})
         return
 
     } catch (error) {
         console.log(error)
         res.status(500).json({success:false, message:"Internal server error"})
     }
+}
+
+const updateAccessToken = () =>{
+    
 }
 
 export default loginUser
