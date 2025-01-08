@@ -14,7 +14,7 @@ const getAllBrands = async (req: Request, res: Response) => {
       : {};
 
     const getBrands = await Brand.find(query)
-      .sort({ createdAt: 1 }) // Sort by creation date in descending order
+      .sort({ createdAt: -1}) // Sort by creation date in descending order
       .skip(skip) // Skip the required number of documents
       .limit(limit); // Limit the number of results
 

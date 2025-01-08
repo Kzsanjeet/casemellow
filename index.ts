@@ -9,6 +9,8 @@ import brandRouter from "./users/routes/brand.routes/brandRoute";
 import productRouter from "./users/routes/product.routes/productRoutes";
 import offerRouter from "./users/routes/offer.routes/offerRoute";
 import getAllBrandRouter from "./users/routes/brand.routes/getAllBrandRoute";
+import editBrandRouter from "./users/routes/brand.routes/editSpecificBrandRoute";
+import getSpecificBrandRouter from "./users/routes/brand.routes/getSpecificBrandRoute";
 
 dotenv.config()
 const app =  express()
@@ -24,7 +26,7 @@ app.use(cors(
     {
         origin: ["http://localhost:3000"],
         credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE"],
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
         allowedHeaders: ["Content-Type", "Authorization"],
     }
 ))
@@ -37,7 +39,9 @@ app.use("/api/v1",
     brandRouter,
     productRouter,
     offerRouter,
-    getAllBrandRouter
+    getAllBrandRouter,
+    editBrandRouter,
+    getSpecificBrandRouter
 )
 
 app.listen(port, () => {

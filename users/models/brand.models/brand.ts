@@ -10,6 +10,9 @@ const brandSchema = new Schema({
         },
     ],
     isActive:{type:Boolean, default:true},
+},
+{
+    timestamps: true,
 });
 
 const Brand = mongoose.model("Brand", brandSchema);
