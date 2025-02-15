@@ -3,14 +3,20 @@ import dotenv from "dotenv";
 import cors from "cors"
 
 import connectDb from "./dbConnect";
-import registerRouter from "./users/routes/user.routes/registerRoute";
-import loginRouter from "./users/routes/user.routes/loginRoute";
-import brandRouter from "./users/routes/brand.routes/brandRoute";
-import productRouter from "./users/routes/product.routes/productRoutes";
-import offerRouter from "./users/routes/offer.routes/offerRoute";
-import getAllBrandRouter from "./users/routes/brand.routes/getAllBrandRoute";
-import editBrandRouter from "./users/routes/brand.routes/editSpecificBrandRoute";
-import getSpecificBrandRouter from "./users/routes/brand.routes/getSpecificBrandRoute";
+import registerRouter from "./admin/routes/user.routes/registerRoute";
+import loginRouter from "./admin/routes/user.routes/loginRoute";
+import brandRouter from "./admin/routes/brand.routes/brandRoute";
+import offerRouter from "./admin/routes/offer.routes/offerRoute";
+import getAllBrandRouter from "./admin/routes/brand.routes/getAllBrandRoute";
+import editBrandRouter from "./admin/routes/brand.routes/editSpecificBrandRoute";
+import getSpecificBrandRouter from "./admin/routes/brand.routes/getSpecificBrandRoute";
+import productRouter from "./admin/routes/product.routes/productRoutes";
+import editSpecificProductRouter from "./admin/routes/product.routes/editProductRoutes";
+import getAllProductRouter from "./admin/routes/product.routes/getAllProductRoutes";
+import deleteBrandRouter from "./admin/routes/brand.routes/deleteBrandRoute";
+import getSpecificProductRouter from "./admin/routes/product.routes/getSpecificProductRoutes";
+import updateProductStatusRouter from "./admin/routes/product.routes/updateProductStatusRoute";
+import deleteProductRouter from "./admin/routes/product.routes/deleteProductRoutes";
 
 dotenv.config()
 const app =  express()
@@ -36,12 +42,22 @@ app.use(urlencoded({extended:true}))
 app.use("/api/v1",
     registerRouter,
     loginRouter,
-    brandRouter,
-    productRouter,
     offerRouter,
+
+//brandRouter
+    brandRouter,
     getAllBrandRouter,
     editBrandRouter,
-    getSpecificBrandRouter
+    getSpecificBrandRouter,
+    deleteBrandRouter,
+
+//product router
+    productRouter,
+    editSpecificProductRouter,
+    getAllProductRouter,
+    getSpecificProductRouter,
+    updateProductStatusRouter,
+    deleteProductRouter
 )
 
 app.listen(port, () => {
