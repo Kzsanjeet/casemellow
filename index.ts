@@ -17,6 +17,13 @@ import deleteBrandRouter from "./admin/routes/brand.routes/deleteBrandRoute";
 import getSpecificProductRouter from "./admin/routes/product.routes/getSpecificProductRoutes";
 import updateProductStatusRouter from "./admin/routes/product.routes/updateProductStatusRoute";
 import deleteProductRouter from "./admin/routes/product.routes/deleteProductRoutes";
+import getPopularProductRouter from "./users/routes/product.routes/getPopularProductRoutes";
+import getBestSellingProductRouter from "./users/routes/product.routes/getBestSellingProductRouter";
+import getProductByCategoryRouter from "./users/routes/product.routes/getProductByCategoryRoutes";
+import getSingleProductRouter from "./users/routes/product.routes/getSpecificProductRoutes";
+import getPhoneModelByBrandRouter from "./users/routes/product.routes/getPhoneModelsRoutes";
+import getSimilarProductRouter from "./users/routes/product.routes/getSimilarProductRoutes";
+import getAllProductRouterForClient from "./users/routes/product.routes/getAllProductRoutes";
 
 dotenv.config()
 const app =  express()
@@ -57,10 +64,21 @@ app.use("/api/v1",
     getAllProductRouter,
     getSpecificProductRouter,
     updateProductStatusRouter,
-    deleteProductRouter
+    deleteProductRouter,
+
+    //for client
+    //for product router
+    getPopularProductRouter,
+    getBestSellingProductRouter,
+    getProductByCategoryRouter,
+    getSingleProductRouter,
+    getPhoneModelByBrandRouter,
+    getSimilarProductRouter,
+    getAllProductRouterForClient
 )
 
-app.listen(port, () => {
+
+app.listen(port, () => {    
     console.log(`Server is running on port ${port}`)
 });
  
