@@ -3,14 +3,23 @@ import mongoose from "mongoose";
 
 const offerSchema = new Schema(
     {
-        productName: { type: String, required: true },
-        productDescription: { type: String, required: true },
-        productPrice: { type: Number, required: true, min: 0 },
-        discountPercentage: { type: Number, required: true, min: 0, max: 100 },
-        priceAfterDiscount: { type: Number},
-        productImage: { type: String, required: true },
-        productCategory: { type: String, required: true },
-        brands: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
+    title:{
+        type:String,
+        required:true
+    },
+     promoCode :{type:String, required:true},
+     discount:{
+        type:Number,
+        required:true,
+     },
+     expiry:{
+        type:Date,
+        required:true
+     },
+     isActive:{
+        type:Boolean,
+        default:true
+     }
     },
     {
         timestamps: true, 

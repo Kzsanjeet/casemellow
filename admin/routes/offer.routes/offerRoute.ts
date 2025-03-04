@@ -2,8 +2,8 @@ import express from "express";
 import addOffer from "../../controllers/offer/offerController";
 
 
-const offerRouter = express.Router();
+const router = express.Router();
 
-offerRouter.route("/add-offer").post(addOffer)
+router.post("/offer/add-offer", addOffer);
 
-export default offerRouter
+export default router;

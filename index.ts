@@ -24,6 +24,7 @@ import getSingleProductRouter from "./users/routes/product.routes/getSpecificPro
 import getPhoneModelByBrandRouter from "./users/routes/product.routes/getPhoneModelsRoutes";
 import getSimilarProductRouter from "./users/routes/product.routes/getSimilarProductRoutes";
 import getAllProductRouterForClient from "./users/routes/product.routes/getAllProductRoutes";
+import addOrderRouter from "./users/routes/order.routes/addOrderRoutes";
 
 dotenv.config()
 const app =  express()
@@ -74,7 +75,10 @@ app.use("/api/v1",
     getSingleProductRouter,
     getPhoneModelByBrandRouter,
     getSimilarProductRouter,
-    getAllProductRouterForClient
+    getAllProductRouterForClient,
+
+    //for order
+    addOrderRouter
 )
 
 

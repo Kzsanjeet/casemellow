@@ -10,4 +10,3 @@
   "include": ["**/*"] // Matches all files in the project directory
 }
 
-
