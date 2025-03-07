@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
 import mongoose from "mongoose";
 
-const orderSchema = new Schema(
+const cartSchema = new Schema(
   {
     clientId: {
       type: Schema.Types.ObjectId,
@@ -32,19 +32,9 @@ const orderSchema = new Schema(
       type:Number,
       required:true
     },
-    orderDate: {
+    cartDate: {
       type: Date,
       default: Date.now,
-    },
-    orderStatus: {
-      type: String,
-      enum: ["pending", "shipped", "delivered", "canceled", "returned"], 
-      default: "pending",
-    },
-    paymentStatus: {
-      type: String,
-      enum: ["pending", "paid", "failed"], 
-      default: "pending",
     },
   },
   {
@@ -52,6 +42,6 @@ const orderSchema = new Schema(
   }
 );
 
-const Order = mongoose.model("Order", orderSchema);
+const Cart = mongoose.model("Cart", cartSchema);
 
-export default Order;
+export default Cart;

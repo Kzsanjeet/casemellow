@@ -25,6 +25,10 @@ import getPhoneModelByBrandRouter from "./users/routes/product.routes/getPhoneMo
 import getSimilarProductRouter from "./users/routes/product.routes/getSimilarProductRoutes";
 import getAllProductRouterForClient from "./users/routes/product.routes/getAllProductRoutes";
 import addOrderRouter from "./users/routes/order.routes/addOrderRoutes";
+import addToCartRouter from "./users/routes/cart.routes/addCartRoutes";
+import updateCartRouter from "./users/routes/cart.routes/updateCartRoutes";
+import deleteCartRouter from "./users/routes/cart.routes/deleteCartRoutes";
+import getAllUserCartRouter from "./users/routes/cart.routes/getAllUserCartRoutes";
 
 dotenv.config()
 const app =  express()
@@ -50,6 +54,9 @@ app.use(urlencoded({extended:true}))
 app.use("/api/v1",
     registerRouter,
     loginRouter,
+
+
+    //offer
     offerRouter,
 
 //brandRouter
@@ -67,6 +74,10 @@ app.use("/api/v1",
     updateProductStatusRouter,
     deleteProductRouter,
 
+
+
+
+
     //for client
     //for product router
     getPopularProductRouter,
@@ -78,7 +89,13 @@ app.use("/api/v1",
     getAllProductRouterForClient,
 
     //for order
-    addOrderRouter
+    addOrderRouter,
+
+    //for cart
+    addToCartRouter,
+    updateCartRouter,
+    deleteCartRouter,
+    getAllUserCartRouter
 )
 
 
