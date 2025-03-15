@@ -1,6 +1,7 @@
 import express, { Request, Response, urlencoded} from "express";
 import dotenv from "dotenv";
 import cors from "cors"
+import cookieParser from "cookie-parser";
 
 import connectDb from "./dbConnect";
 import registerRouter from "./admin/routes/user.routes/registerRoute";
@@ -29,6 +30,9 @@ import addToCartRouter from "./users/routes/cart.routes/addCartRoutes";
 import updateCartRouter from "./users/routes/cart.routes/updateCartRoutes";
 import deleteCartRouter from "./users/routes/cart.routes/deleteCartRoutes";
 import getAllUserCartRouter from "./users/routes/cart.routes/getAllUserCartRoutes";
+import registerClientRouter from "./users/routes/register.routes/signupRoutes";
+import loginClientRouter from "./users/routes/register.routes/loginRoutes";
+import clientDataRouter from "./users/routes/register.routes/getUserDataRoutes";
 
 dotenv.config()
 const app =  express()
@@ -49,6 +53,7 @@ app.use(cors(
     }
 ))
 app.use(urlencoded({extended:true}))
+app.use(cookieParser())
 
 // routes
 app.use("/api/v1",
@@ -75,10 +80,13 @@ app.use("/api/v1",
     deleteProductRouter,
 
 
-
-
-
     //for client
+
+    // for client registration
+    registerClientRouter,
+    loginClientRouter,
+    clientDataRouter,
+
     //for product router
     getPopularProductRouter,
     getBestSellingProductRouter,

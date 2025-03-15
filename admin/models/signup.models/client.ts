@@ -22,6 +22,8 @@ const registerClient = new Schema({
         type:String,
         default:""
     }
+},{
+    timestamps: true
 });
 
 
