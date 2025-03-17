@@ -26,6 +26,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
 
         // Generate Access Token
         const accessToken = jwt.sign({ clientId: user._id }, process.env.ACCESS_SECRET_KEY as string, { expiresIn: "1h" });
+        
 
         if (!accessToken) {
             res.status(400).json({ success: false, message: "Failed to generate access token" });
