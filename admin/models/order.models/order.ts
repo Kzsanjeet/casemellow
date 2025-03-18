@@ -8,29 +8,39 @@ const orderSchema = new Schema(
       ref: "Client",
       required: true, 
     },
-    productId: {
-      type: Schema.Types.ObjectId,
-      ref: "Product",
-      required: true, 
-    },
-    brandName: {
+    productId: [
+      {
+        product: {
+          type: Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          default: 1,
+        },
+      },
+    ],
+    cartId: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Cart",
+      },
+    ],
+    pickUpAddress: {
       type: String,
       required: true,
       trim: true,
     },
-    phoneModel: {
+    deliveryAddress: {
       type: String,
       required: true,
       trim: true,
     },
-    coverType: {
-      type: String,
+    totalQuantity: {
+      type: Number,
       required: true,
-      trim: true,
-    },
-    quantity:{
-      type:Number,
-      required:true
     },
     orderDate: {
       type: Date,
@@ -38,13 +48,21 @@ const orderSchema = new Schema(
     },
     orderStatus: {
       type: String,
-      enum: ["pending", "shipped", "delivered", "canceled", "returned"], 
+      enum: ["pending", "picked up", "sent for delivery", "delivered"],
       default: "pending",
     },
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid", "failed"], 
+      enum: ["pending", "paid", "failed"],
       default: "pending",
+    },
+    totalPrice: {
+      type: Number,
+      required: true,
+    },
+    promoAppliedProductId: {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
     },
   },
   {
