@@ -11,10 +11,16 @@ const addOffer = async (req: Request, res: Response): Promise<void> => {
           return;
       }
 
-      if (isNaN(Date.parse(expiry))) {
-          res.status(400).json({ success: false, message: "Invalid expiry date format" });
-          return;
-      }
+    //   if (isNaN(Date.parse(expiry))) {
+    //       res.status(400).json({ success: false, message: "Invalid expiry date format" });
+    //       return;
+    //   }
+      const formattedExpiry = new Date(expiry);
+        if (isNaN(formattedExpiry.getTime())) {
+            res.status(400).json({ success: false, message: "Invalid expiry date format" });
+            return;
+        }
+
 
       const existingOffer = await Offer.findOne({ promoCode });
       if (existingOffer) {
@@ -22,7 +28,7 @@ const addOffer = async (req: Request, res: Response): Promise<void> => {
           return;
       }
 
-      const formattedExpiry = new Date(expiry);
+    //   const formattedExpiry = new Date(expiry);
 
       const newOffer = await Offer.create({
           title,

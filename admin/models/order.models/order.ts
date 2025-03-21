@@ -28,6 +28,10 @@ const orderSchema = new Schema(
         ref: "Cart",
       },
     ],
+    number:{
+      type: Number,
+      required: true,
+    },
     pickUpAddress: {
       type: String,
       required: true,
@@ -51,6 +55,10 @@ const orderSchema = new Schema(
       enum: ["pending", "picked up", "sent for delivery", "delivered"],
       default: "pending",
     },
+    paymentMethod:{
+      type:String,
+      enum: ["Khalti", "COD"]
+    },
     paymentStatus: {
       type: String,
       enum: ["pending", "paid", "failed"],
@@ -59,10 +67,6 @@ const orderSchema = new Schema(
     totalPrice: {
       type: Number,
       required: true,
-    },
-    promoAppliedProductId: {
-      type: Schema.Types.ObjectId,
-      ref: "Product",
     },
   },
   {

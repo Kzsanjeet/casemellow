@@ -25,7 +25,7 @@ import getSingleProductRouter from "./users/routes/product.routes/getSpecificPro
 import getPhoneModelByBrandRouter from "./users/routes/product.routes/getPhoneModelsRoutes";
 import getSimilarProductRouter from "./users/routes/product.routes/getSimilarProductRoutes";
 import getAllProductRouterForClient from "./users/routes/product.routes/getAllProductRoutes";
-import addOrderRouter from "./users/routes/order.routes/addOrderRoutes";
+import {addOrderRouter, khaltiRouter} from "./users/routes/order.routes/addOrderRoutes";
 import addToCartRouter from "./users/routes/cart.routes/addCartRoutes";
 import updateCartRouter from "./users/routes/cart.routes/updateCartRoutes";
 import deleteCartRouter from "./users/routes/cart.routes/deleteCartRoutes";
@@ -103,7 +103,10 @@ app.use("/api/v1",
     addToCartRouter,
     updateCartRouter,
     deleteCartRouter,
-    getAllUserCartRouter
+    getAllUserCartRouter,
+
+    //khalti
+    khaltiRouter
 )
 
 

@@ -11,6 +11,8 @@ const authenticate = async (req: AuthenticatedRequest, res: Response, next: Next
     const token =
       req.header("Authorization")?.split(" ")[1] || req.cookies.accessToken;
 
+      // console.log("verify",token)
+
     // If token is not found, send a 401 Unauthorized response
     if (!token) {
       res.status(401).json({ success: false, message: "Access token is missing" });
