@@ -56,8 +56,9 @@ const orderSchema = new Schema(
       default: "pending",
     },
     paymentMethod:{
-      type:String,
-      enum: ["Khalti", "COD"]
+      type: String,
+      enum: ["Khalti", "COD"],
+      default: "COD",
     },
     paymentStatus: {
       type: String,

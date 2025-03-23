@@ -100,7 +100,24 @@ const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void>
             return;
         }
 
-        let totalQuantity = 0;
+        // Find an existing order for the client (optional: based on cartId)
+        let existingOrder = await Order.findOne({ clientId, cartId: { $in: cartId } });
+
+        if (existingOrder?.orderStatus === "pending") {
+            // If order exists, update the cart items
+            existingOrder.cartId.push(...cartId);
+            await existingOrder.save();
+
+            res.status(200).json({ 
+                success: true, 
+                message: "Order updated successfully", 
+                data: existingOrder 
+            });
+            return;
+        }
+
+        // Get products and calculate total quantity
+        const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
         const products = [];
         const missingProducts = [];
 
@@ -110,7 +127,6 @@ const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void>
                 missingProducts.push(item.productId);
                 continue;
             }
-            totalQuantity += item.quantity;
             products.push({
                 product: item.productId,
                 quantity: item.quantity,
@@ -131,7 +147,8 @@ const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void>
                 return;
             }
             const discountAmount = promo.discount || 0;
-            finalPrice = Math.max(totalPrice - discountAmount, 0);
+            const maxDiscount = totalPrice * 0.5; // Example: max discount of 50%
+            finalPrice = Math.max(totalPrice - Math.min(discountAmount, maxDiscount), 0);
         }
 
         // Create the order
@@ -168,65 +185,79 @@ const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void>
 };
 
 
-const khalti =  async (req:Request, res:Response):Promise<void> => {
-    try {
-      const { orderId } = req.body;
-  
-      // Fetch order details from DB
-      const order = await Order.findById(orderId);
-      if (!order) {
-        res.status(404).json({ error: "Order not found" });
-        return
-      }
-  
-      // Khalti payment payload
-      const khaltiConfig = {
-        return_url: `${process.env.NEXT_BASE_URL}/order-success`,
-        website_url: process.env.NEXT_BASE_URL,
-        amount: order.totalPrice * 100, // Convert to paisa
-        purchase_order_id: order._id.toString(),
-        purchase_order_name: "Casemellow Order",
-        customer_info: {
-          name: "Customer",
-          email: "customer@email.com",
-          phone: order.number.toString(),
-        },
-      };
-      console.log(process.env.KHALTI_SECRET_KEY)
-      if(!process.env.KHALTI_SECRET_KEY){
-        res.status(500).json({ success: false, message: "Khalti secret key"})
-      }
-      const response = await fetch("https://a.khalti.com/api/v2/epayment/initiate/", {
-        method: "POST",
-        headers: {
-          Authorization: `Key ${process.env.KHALTI_SECRET_KEY as string}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(khaltiConfig),
-      });
-  
-      const khaltiResponse = await response.json();
-  
-      if (!response.ok) {
-        console.error("Khalti API Error:", khaltiResponse);
-        res.status(400).json({ error: "Payment initiation failed", details: khaltiResponse });
-        return
-      }
-  
-      res.status(200).json({
-        khaltiPaymentUrl: khaltiResponse.payment_url,
-        transactionId: khaltiResponse.pidx,
-      });
-    } catch (error) {
-      console.error("Payment API Error:", error);
-      if(error instanceof(Error)){
-        res.status(500).json({ error: "Internal Server Error", details: error.message });
-      }
-    }}
+const khalti = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { orderId } = req.body;
 
-    const verifyKhalti = async (req:Request, res:Response):Promise<void> => {
+    // const order = await Order.findById(orderId).populate("clientId");
+     // Fetch order details from DB & explicitly define populated type
+     const order = await Order.findById(orderId).populate<{ clientId: { name: string; email: string } }>("clientId");
+
+    if (!order) {
+      res.status(404).json({ error: "Order not found" });
+      return;
+    }
+
+    if (!order.clientId) {
+      res.status(404).json({ success: false, message: "User not found" });
+      return;
+    }
+
+    // Khalti payment payload
+    const khaltiConfig = {
+      return_url: `${process.env.NEXT_BASE_URL}/order-success`,
+      website_url: process.env.NEXT_BASE_URL,
+      amount: order.totalPrice * 100, // Convert to paisa
+      purchase_order_id: order._id.toString(),
+      purchase_order_name: order.clientId.name ||"Casemellow Order",
+      customer_info: {
+        name: order.clientId.name || "Unknown Customer", // Fetch name from clientId
+        email: order.clientId.email|| "customer@email.com",
+        phone: order.number.toString(),
+      },
+    };
+
+
+
+    if (!process.env.KHALTI_SECRET_KEY) {
+      res.status(500).json({ success: false, message: "Khalti secret key is missing" });
+      return;
+    }
+
+    const response = await fetch("https://a.khalti.com/api/v2/epayment/initiate/", {
+      method: "POST",
+      headers: {
+        Authorization: `Key ${process.env.KHALTI_SECRET_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(khaltiConfig),
+    });
+
+    const khaltiResponse = await response.json();
+
+    if (!response.ok) {
+      console.error("Khalti API Error:", khaltiResponse);
+      res.status(400).json({ error: "Payment initiation failed", details: khaltiResponse });
+      return;
+    }
+
+    res.status(200).json({
+      khaltiPaymentUrl: khaltiResponse.payment_url,
+      transactionId: khaltiResponse.pidx,
+    });
+
+  } catch (error) {
+    console.error("Payment API Error:", error);
+    if (error instanceof Error) {
+      res.status(500).json({ error: "Internal Server Error", details: error.message });
+    }
+  }
+};
+
+
+const verifyKhalti = async (req:Request, res:Response):Promise<void> => {
         try {
-          const { pidx, orderId } = req.body;
+          const { pidx, orderId } = req.body; 
       
           // Verify payment with Khalti
           const verifyResponse = await fetch("https://a.khalti.com/api/v2/epayment/lookup/", {
@@ -248,11 +279,11 @@ const khalti =  async (req:Request, res:Response):Promise<void> => {
           // Update order status in database
           const order = await Order.findByIdAndUpdate(
             orderId,
-            { paymentStatus: "paid", orderStatus: "picked up" },
+            { paymentStatus: "paid"},
             { new: true }
           );
       
-          res.status(200).json({ message: "Payment successful", order });
+          res.status(200).json({ message: "Payment successful", data: order });
         } catch (error) {
             if(error instanceof(Error)){
                 console.error("Payment Verification Error:", error);
