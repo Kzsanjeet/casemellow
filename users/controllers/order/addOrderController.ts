@@ -171,11 +171,11 @@ const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void>
             return;
         }
 
-        const removeSelectedCart = await Cart.deleteMany({ _id: { $in: cartId } });
-        if (removeSelectedCart.deletedCount === 0) {
-            res.status(500).json({ success: false, message: "Unable to delete cart items" });
-            return;
-        }
+        // const removeSelectedCart = await Cart.deleteMany({ _id: { $in: cartId } });
+        // if (removeSelectedCart.deletedCount === 0) {
+        //     res.status(500).json({ success: false, message: "Unable to delete cart items" });
+        //     return;
+        // }
 
         res.status(201).json({ success: true, message: "Order confirmed", data: createOrder });
     } catch (error) {
@@ -216,6 +216,7 @@ const khalti = async (req: Request, res: Response): Promise<void> => {
         phone: order.number.toString(),
       },
     };
+    
 
 
 
@@ -240,6 +241,9 @@ const khalti = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ error: "Payment initiation failed", details: khaltiResponse });
       return;
     }
+
+    order.paymentMethod = "Khalti"
+    await order.save()
 
     res.status(200).json({
       khaltiPaymentUrl: khaltiResponse.payment_url,
