@@ -3,6 +3,7 @@ import {addOrder, khalti, verifyKhalti} from "../../controllers/order/addOrderCo
 import getUserOrder from "../../controllers/order/getOrderdata.controller";
 import getAllOrders from "../../controllers/order/getAllOrderController";
 import codOrder from "../../controllers/order/codOrderController";
+import updatePaymentStatus from "../../controllers/order/updatePaymentStatusController";
 // import authenticate from "../../../middleware/tokenAuth";
 
 const addOrderRouter = express.Router();
@@ -19,5 +20,7 @@ getUserOrderRouter.route("/order/get/:orderId").get(getUserOrder)
 getUserOrderRouter.route("/order/get").get(getAllOrders)
 getUserOrderRouter.route("/order/add-order/cod").post(codOrder)
 
+//update status
+getUserOrderRouter.route("/order/update-status/:orderId").patch(updatePaymentStatus)
 
 export {addOrderRouter,khaltiRouter, getUserOrderRouter}

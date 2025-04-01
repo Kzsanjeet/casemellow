@@ -73,14 +73,14 @@ interface AuthenticatedRequest extends Request {
 
 const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const { clientId, cartId, promoCode, number, pickUpAddress, deliveryAddress, paymentMethod, totalPrice } = req.body;
+        const { clientId, cartId, promoCode, number, pickUpAddress, deliveryAddress,totalPrice } = req.body;
 
         // Validate required fields
         const missingFields = [];
         if (!cartId || cartId.length === 0) missingFields.push("cartId");
         if (!pickUpAddress) missingFields.push("pickUpAddress");
         if (!deliveryAddress) missingFields.push("deliveryAddress");
-        if (!paymentMethod) missingFields.push("paymentMethod");
+        // if (!paymentMethod) missingFields.push("paymentMethod");
         if (!totalPrice) missingFields.push("totalPrice");
         if (!number) missingFields.push("number");
 
@@ -159,7 +159,6 @@ const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void>
             pickUpAddress,
             deliveryAddress,
             number,
-            paymentMethod,
             totalQuantity,
             totalPrice: finalPrice,
             orderStatus: "pending",

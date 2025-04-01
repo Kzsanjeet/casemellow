@@ -5,4 +5,4 @@ const getAllUserCartRouter = express.Router();
 
 getAllUserCartRouter.route("/cart/get/:clientId").get(getAllUserCart)
 
-export default getAllUserCartRouter
+export default getAllUserCartRouter 

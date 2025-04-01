@@ -17,6 +17,7 @@ const codOrder = async(req:Request,res:Response) =>{
        return;
      }
      order.paymentMethod = "COD"
+     order.paymentStatus = "pending"
      await order.save()
      res.status(200).json({success:true, message:"COD order", data:order})
  
