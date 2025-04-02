@@ -14,6 +14,8 @@ const getAllOrders = async (req: Request, res: Response): Promise<void> => {
         if (search && typeof search === "string") {
             query.$or = [
                 { "productId.product.productName": { $regex: search, $options: "i" } }, 
+                { "paymentStatus": { $regex: search, $options: "i" }},
+                { "orderStatus": { $regex: search, $options: "i" } },
                 { "clientId.name": { $regex: search, $options: "i" } }, 
             ];
         }
@@ -37,7 +39,7 @@ const getAllOrders = async (req: Request, res: Response): Promise<void> => {
         const orders = await Order.find(query)
         .populate("clientId", "name number") 
         .populate("cartId")
-        .populate("productId.product", "productName productCategory productPrice productImage co")
+        .populate("productId.product", "productName productCategory productPrice productImage")
         .sort(sortOptions)
         .skip(skip)
         .limit(limit);
