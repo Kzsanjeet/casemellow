@@ -53,7 +53,11 @@ const productSchema = new Schema(
     productCategory: { type: String, required: true },
     isActive: { type: Boolean, default: true }, // Renamed for consistency,
     productView :{type:Number, default:0},
-    ordersNumber: {type:Number, default:0}
+    ordersNumber: {type:Number, default:0},
+    isCart:{
+      type:Boolean,
+      default:false
+    }
   },
   { timestamps: true } // Add timestamps for createdAt and updatedAt
 );

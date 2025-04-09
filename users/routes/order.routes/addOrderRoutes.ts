@@ -5,6 +5,7 @@ import getAllOrders from "../../controllers/order/getAllOrderController";
 import codOrder from "../../controllers/order/codOrderController";
 import updatePaymentStatus from "../../controllers/order/updatePaymentStatusController";
 import {editOrderStatus, editPaymentStatus} from "../../controllers/order/editPaymentStatusController";
+import deleteOrder from "../../controllers/order/deleteOrderController";
 // import authenticate from "../../../middleware/tokenAuth";
 
 const addOrderRouter = express.Router();
@@ -28,5 +29,7 @@ getUserOrderRouter.route("/order/update-status/:orderId").patch(updatePaymentSta
 //editPayment status
 getUserOrderRouter.route("/order/payment/update-status").patch(editPaymentStatus)
 getUserOrderRouter.route("/order/order/update-status").patch(editOrderStatus)
+
+getUserOrderRouter.route("/order/delete/:orderId").delete(deleteOrder)
 
 export {addOrderRouter,khaltiRouter, getUserOrderRouter}

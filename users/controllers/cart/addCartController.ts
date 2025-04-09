@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Cart from "../../models/cart/cart.models";
+import Product from "../../../admin/models/product.models/productModels";
 
 interface AuthenticatedRequest extends Request {
     user?: { clientId: string }; 
@@ -21,7 +22,7 @@ const addToCart = async (req: AuthenticatedRequest, res: Response): Promise<void
         }
 
         // Check if the product is already in the cart for the same user
-        const existingCartItem = await Cart.findOne({ clientId, productId });
+        const existingCartItem = await Cart.findOne({ clientId, phoneModel, coverType });
 
         if (existingCartItem) {
             existingCartItem.quantity += quantity;
@@ -34,13 +35,21 @@ const addToCart = async (req: AuthenticatedRequest, res: Response): Promise<void
             return
         }
 
+        const updatedTheProduct = await Product.findById(productId);
+        if (!updatedTheProduct) {
+            res.status(404).json({ success: false, message: "Product not found" });
+            return;
+        }
+        updatedTheProduct.isCart = true;
+        await updatedTheProduct.save();
+        
         const addCart = await Cart.create({
             clientId, 
             productId,
             brandName,
             phoneModel,
             coverType,
-            quantity
+            quantity,
         });
 
         if (!addCart) {

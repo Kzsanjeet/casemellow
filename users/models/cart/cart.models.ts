@@ -35,7 +35,7 @@ const cartSchema = new Schema(
     cartDate: {
       type: Date,
       default: Date.now,
-    },
+    }
   },
   {
     timestamps: true,

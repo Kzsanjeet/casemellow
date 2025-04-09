@@ -1,66 +1,3 @@
-// import { Request, Response } from "express";
-// import Order from "../../../admin/models/order.models/order";
-// import Offer from "../../../admin/models/offer.models/offer";
-// import Product from "../../../admin/models/product.models/productModels";
-
-// const addOrder = async (req: Request, res: Response): Promise<void> => {
-//     try {
-//         const { clientId, productId, promoCode, brandName, phoneModel, coverType } = req.body;
-
-//         if (!clientId || !productId || !brandName || !phoneModel || !coverType) {
-//             res.status(400).json({ success: false, message: "All fields are required" });
-//             return;
-//         }
-
-//         let finalTotal 
-
-     
-//         if (promoCode) {
-//             const validatePromoCode = await Offer.findOne({ promoCode: promoCode });
-//             if (!validatePromoCode) {
-//                 res.status(400).json({ success: false, message: "Invalid promo code" });
-//                 return;
-//             }
-
-//             const product = await Product.findById(productId);
-//             if (!product) {
-//                 res.status(404).json({ success: false, message: "Product not found" });
-//                 return;
-//             }
-
-//             const discountAmount = validatePromoCode.discount || 0;
-//             finalTotal = Math.max(product.productPrice - discountAmount, 0); 
-//         }
-
-//         // Create the order
-//         const placeOrder = await Order.create({
-//             clientId,
-//             productId,
-//             brandName,
-//             phoneModel,
-//             coverType,
-//             total: finalTotal, 
-//         });
-
-//         if (!placeOrder) {
-//             res.status(500).json({ success: false, message: "Unable to create order" });
-//             return;
-//         }
-
-//         res.status(201).json({ success: true, message: "Order confirmed", data: placeOrder });
-
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ success: false, message: "Internal Server Error" });
-//     }
-// };
-
-// export default addOrder;
-
-
-
-
-
 import { Request, Response } from "express";
 import Order from "../../../admin/models/order.models/order";
 import Offer from "../../../admin/models/offer.models/offer";
@@ -72,115 +9,131 @@ interface AuthenticatedRequest extends Request {
 }
 
 const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    try {
-        const { clientId, cartId, promoCode, number, pickUpAddress, deliveryAddress,totalPrice } = req.body;
+  try {
+      const { clientId, cartId, promoCode, number, pickUpAddress, deliveryAddress, totalPrice } = req.body;
 
-        // Validate required fields
-        const missingFields = [];
-        if (!cartId || cartId.length === 0) missingFields.push("cartId");
-        if (!pickUpAddress) missingFields.push("pickUpAddress");
-        if (!deliveryAddress) missingFields.push("deliveryAddress");
-        // if (!paymentMethod) missingFields.push("paymentMethod");
-        if (!totalPrice) missingFields.push("totalPrice");
-        if (!number) missingFields.push("number");
+      // Validate required fields
+      const missingFields = [];
+      if (!cartId || cartId.length === 0) missingFields.push("cartId");
+      if (!pickUpAddress) missingFields.push("pickUpAddress");
+      if (!deliveryAddress) missingFields.push("deliveryAddress");
+      if (!totalPrice) missingFields.push("totalPrice");
+      if (!number) missingFields.push("number");
 
-        if (missingFields.length > 0) {
-            res.status(400).json({
-                success: false,
-                message: "Missing required fields",
-                data: missingFields
-            });
-            return;
-        }
+      if (missingFields.length > 0) {
+          res.status(400).json({
+              success: false,
+              message: "Missing required fields",
+              data: missingFields
+          });
+          return;
+      }
 
-        // Retrieve the cart items
-        const cartItems = await Cart.find({ clientId, _id: { $in: cartId } });
-        if (cartItems.length === 0) {
-            res.status(404).json({ success: false, message: "No products found in the cart" });
-            return;
-        }
+      // Retrieve the cart items
+      const cartItems = await Cart.find({ clientId, _id: { $in: cartId } });
+      if (cartItems.length === 0) {
+          res.status(404).json({ success: false, message: "No products found in the cart" });
+          return;
+      }
 
-        // Find an existing order for the client (optional: based on cartId)
-        let existingOrder = await Order.findOne({ clientId, cartId: { $in: cartId } });
+      // Check for existing order with pending status
+      let existingOrder = await Order.findOne({ clientId, cartId: { $in: cartId }, orderStatus: "pending" });
 
-        if (existingOrder?.orderStatus === "pending") {
-            // If order exists, update the cart items
-            existingOrder.cartId.push(...cartId);
-            await existingOrder.save();
+      if (existingOrder) {
+          // Update existing order's cartId
+          existingOrder.cartId.push(...cartId);
+          await existingOrder.save();
 
-            res.status(200).json({ 
-                success: true, 
-                message: "Order updated successfully", 
-                data: existingOrder 
-            });
-            return;
-        }
+          // Delete cart items
+          const removeSelectedCart = await Cart.deleteMany({ _id: { $in: cartId } });
+          if (removeSelectedCart.deletedCount === 0) {
+              res.status(500).json({ success: false, message: "Unable to delete cart items" });
+              return;
+          }
 
-        // Get products and calculate total quantity
-        const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-        const products = [];
-        const missingProducts = [];
+          res.status(200).json({
+              success: true,
+              message: "Order updated successfully",
+              data: existingOrder
+          });
+          return;
+      }
 
-        for (let item of cartItems) {
-            const product = await Product.findById(item.productId);
-            if (!product) {
-                missingProducts.push(item.productId);
-                continue;
-            }
-            products.push({
-                product: item.productId,
-                quantity: item.quantity,
-            });
-        }
+      // Get product data and calculate total quantity
+      const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+      const products = [];
+      const missingProducts = [];
 
-        if (missingProducts.length > 0) {
-            res.status(404).json({ success: false, message: `Some products not found`, data: missingProducts });
-            return;
-        }
+      for (let item of cartItems) {
+          const product = await Product.findById(item.productId);
+          if (!product) {
+              missingProducts.push(item.productId);
+              continue;
+          }
+          products.push({
+              product: item.productId,
+              quantity: item.quantity,
+          });
+      }
 
-        // Apply promo code
-        let finalPrice = totalPrice;
-        if (promoCode) {
-            const promo = await Offer.findOne({ promoCode });
-            if (!promo) {
-                res.status(400).json({ success: false, message: "Invalid promo code" });
-                return;
-            }
-            const discountAmount = promo.discount || 0;
-            const maxDiscount = totalPrice * 0.5; // Example: max discount of 50%
-            finalPrice = Math.max(totalPrice - Math.min(discountAmount, maxDiscount), 0);
-        }
+      if (missingProducts.length > 0) {
+          res.status(404).json({ success: false, message: `Some products not found`, data: missingProducts });
+          return;
+      }
 
-        // Create the order
-        const createOrder = await Order.create({
-            clientId,
-            productId: products,
-            cartId,
-            pickUpAddress,
-            deliveryAddress,
-            number,
-            totalQuantity,
-            totalPrice: finalPrice,
-            orderStatus: "pending",
-            paymentStatus: "pending",
-        });
+      // Apply promo code
+      let finalPrice = totalPrice;
+      if (promoCode) {
+          const promo = await Offer.findOne({ promoCode });
+          if (!promo) {
+              res.status(400).json({ success: false, message: "Invalid promo code" });
+              return;
+          }
+          const discountAmount = promo.discount || 0;
+          const maxDiscount = totalPrice * 0.5;
+          finalPrice = Math.max(totalPrice - Math.min(discountAmount, maxDiscount), 0);
+      }
 
-        if (!createOrder) {
-            res.status(500).json({ success: false, message: "Unable to create order" });
-            return;
-        }
+      // Create new order
+      const createOrder = await Order.create({
+          clientId,
+          productId: products,
+          cartId,
+          pickUpAddress,
+          deliveryAddress,
+          number,
+          totalQuantity,
+          totalPrice: finalPrice,
+          orderStatus: "pending",
+          paymentStatus: "pending",
+      });
 
-        // const removeSelectedCart = await Cart.deleteMany({ _id: { $in: cartId } });
-        // if (removeSelectedCart.deletedCount === 0) {
-        //     res.status(500).json({ success: false, message: "Unable to delete cart items" });
-        //     return;
-        // }
+      if (!createOrder) {
+          res.status(500).json({ success: false, message: "Unable to create order" });
+          return;
+      }
 
-        res.status(201).json({ success: true, message: "Order confirmed", data: createOrder });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Internal Server Error" });
-    }
+      // Update product order count
+      for (let item of products) {
+          const product = await Product.findById(item.product);
+          if (product) {
+              product.ordersNumber += item.quantity;
+              await product.save(); // Save the updated product
+          }
+      }
+
+      // Delete cart items
+      const removeSelectedCart = await Cart.deleteMany({ _id: { $in: cartId } });
+      if (removeSelectedCart.deletedCount === 0) {
+          res.status(500).json({ success: false, message: "Unable to delete cart items" });
+          return;
+      }
+
+      res.status(201).json({ success: true, message: "Order confirmed", data: createOrder });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: error instanceof Error ? error.message : "Internal Server Error" });
+  }
 };
 
 
@@ -293,7 +246,7 @@ const verifyKhalti = async (req:Request, res:Response):Promise<void> => {
                 res.status(500).json({ error: "Internal Server Error", details: error.message });
             }
         }
-      }
+};
     
   
     export {addOrder,khalti, verifyKhalti}
