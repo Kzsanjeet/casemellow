@@ -34,6 +34,7 @@ import registerClientRouter from "./users/routes/register.routes/signupRoutes";
 import loginClientRouter from "./users/routes/register.routes/loginRoutes";
 import clientDataRouter from "./users/routes/register.routes/getUserDataRoutes";
 import { customizeRouter } from "./admin/routes/customize.routes/customizeRoutes";
+import { addCustomizeOrderRouter } from "./users/routes/order.routes/customizeOrder.routes";
 
 dotenv.config()
 const app =  express()
@@ -111,7 +112,8 @@ app.use("/api/v1",
     khaltiRouter,
 
     //customize
-    customizeRouter
+    customizeRouter,
+    addCustomizeOrderRouter
 )
 
 

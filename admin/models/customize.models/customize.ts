@@ -6,7 +6,7 @@ const customizeSchema = new Schema(
     brands: { type: mongoose.Schema.Types.ObjectId, ref: "Brand", required: true }, // Reference to Brand
     phoneModel: { type: String, required: true },
     coverType: {
-      type: [String],
+      type: String,
       required: true,
     },
     coverPrice: {

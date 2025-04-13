@@ -16,7 +16,7 @@ const addToCart = async (req: AuthenticatedRequest, res: Response): Promise<void
         const clientId = req.user.clientId; 
         const { productId, brandName, phoneModel, coverType, quantity } = req.body;
 
-        if (!productId || !brandName || !phoneModel || !coverType || !quantity) {
+        if ( !brandName || !phoneModel || !coverType) {
             res.status(400).json({ success: false, message: "Please fill all fields" });
             return;
         }

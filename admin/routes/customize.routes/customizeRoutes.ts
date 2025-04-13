@@ -5,6 +5,8 @@ import getAllCustomize from "../../controllers/customize/getAll.controller";
 import getSpecificCustomize from "../../controllers/customize/getSpecific.controller";
 import editCustomize from "../../controllers/customize/editCustomize.controller";
 import deleteCustomize from "../../controllers/customize/deleteCustomize.controller";
+import getPhoneModelsByBrand from "../../controllers/customize/getPhoneModelByBrand.controller";
+import getPhoneModelsMockup from "../../controllers/customize/getPhoneModelMockup.controller";
 const customizeRouter = express.Router();
 
 // Multer storage configuration
@@ -36,5 +38,7 @@ const storage = multer.diskStorage({
   customizeRouter.patch("/customize/edit/:customizeId",upload.fields([{name:"productImage",maxCount:1}]),editCustomize)
 
   customizeRouter.route("/customize/delete/:customizeId").delete(deleteCustomize);
+  customizeRouter.route("/customize/get-models").get(getPhoneModelsByBrand)
+  customizeRouter.route("/customize/get-models/mockup").get(getPhoneModelsMockup);
 
 export{customizeRouter}

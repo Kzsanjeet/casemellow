@@ -16,9 +16,11 @@ const editCustomize = async (req: Request, res: Response): Promise<void> => {
     const {
       brands, // Expecting the brand ID
       phoneModel,
-      coverTypes, // Cover types coming as a stringified JSON array
+      coverType, // Cover types coming as a stringified JSON array
       productPrice,
     } = MulterReq.body;
+
+    console.log(MulterReq.body)
 
     // Extract product ID from request params
     const { customizeId } = req.params;
@@ -59,7 +61,7 @@ const editCustomize = async (req: Request, res: Response): Promise<void> => {
     // Update product with new data
     product.brands = brands;
     product.phoneModel = phoneModel;
-    product.coverType = coverTypes;
+    product.coverType = coverType;
     product.coverPrice = productPrice;
     product.mockUpImage = uploadedImageUrl;
     // Save the updated product

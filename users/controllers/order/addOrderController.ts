@@ -4,7 +4,7 @@ import Offer from "../../../admin/models/offer.models/offer";
 import Product from "../../../admin/models/product.models/productModels";
 import Cart from "../../models/cart/cart.models";
 
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
     user?: { clientId: string }; 
 }
 

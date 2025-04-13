@@ -12,11 +12,16 @@ const getAllOrders = async (req: Request, res: Response): Promise<void> => {
 
         // Search by product name or client name
         if (search && typeof search === "string") {
+            // query.$or = [
+            //     { "productId.product.productName": { $regex: search, $options: "i" } }, 
+            //     { "paymentStatus": { $regex: search, $options: "i" }},
+            //     { "orderStatus": { $regex: search, $options: "i" } },
+            //     { "clientId.name": { $regex: search, $options: "i" } }, 
+            // ];
             query.$or = [
-                { "productId.product.productName": { $regex: search, $options: "i" } }, 
-                { "paymentStatus": { $regex: search, $options: "i" }},
-                { "orderStatus": { $regex: search, $options: "i" } },
-                { "clientId.name": { $regex: search, $options: "i" } }, 
+                { paymentStatus: { $regex: search, $options: "i" } },
+                { orderStatus: { $regex: search, $options: "i" } },
+                {paymentMethod:{$regex: search, $options: "i"}}
             ];
         }
 

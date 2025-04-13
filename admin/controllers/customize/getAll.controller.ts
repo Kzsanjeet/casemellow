@@ -10,24 +10,29 @@ const getAllCustomize = async (req: Request, res: Response): Promise<void> => {
     const skip = (page - 1) * limit;
 
     // Search query using `$or` for multiple fields
+    const sanitizedSearch = search.replace(/\s+/g, "");
+
     const query = search
       ? {
-          $or: [
-            { mockUpName: { $regex: search, $options: "i" } },
-            { phoneModel: { $regex: search, $options: "i" } },
-            // { brands: { $regex: search, $options: "i" } }, // Assuming "brands" is a string; if it's an ObjectId, adjust accordingly
-          ],
+          $expr: {
+            $regexMatch: {
+              input: { $replaceAll: { input: "$phoneModel", find: " ", replacement: "" } },
+              regex: sanitizedSearch,
+              options: "i"
+            }
+          }
         }
       : {};
+    
 
     // Fetch products with pagination and populate brand details
     const getProducts = await Customize.find(query)
-      .populate("brands", "brandName") // Populate only the brandName from the Brand model
-      .sort({ createdAt: -1 }) // Sort by creation date (most recent first)
-      .skip(skip) // Skip documents for pagination
-      .limit(limit); // Limit results per page
+      .populate("brands", "brandName") 
+      .sort({ createdAt: -1 }) 
+      .skip(skip)
+      .limit(limit); 
 
-    const totalProducts = await Customize.countDocuments(query); // Total number of matching documents
+    const totalProducts = await Customize.countDocuments(query); 
 
     if (totalProducts === 0) {
       res.status(404).json({ success: false, message: "No products found" });
