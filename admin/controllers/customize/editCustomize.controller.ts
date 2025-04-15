@@ -31,21 +31,7 @@ const editCustomize = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ success: false, message: "Product not found" });
       return;
     }
-
-    // Parse cover types from the stringified JSON
-    // let parsedCoverTypes;
-    // try {
-    //   parsedCoverTypes = JSON.parse(coverTypes);
-      
-    //   if (!Array.isArray(parsedCoverTypes)) {
-    //     res.status(400).json({ success: false, message: "Cover types must be an array" });
-    //     return;
-    //   }
-    // } catch (error) {
-    //   res.status(400).json({ success: false, message: "Invalid JSON format for cover types" });
-    //   return;
-    // }
-
+    
     // Handle image update
     let uploadedImageUrl = product.mockUpImage; // Keep the existing image if none is uploaded
     const productImage = MulterReq.files.productImage?.[0];

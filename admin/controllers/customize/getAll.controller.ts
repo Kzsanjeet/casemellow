@@ -9,7 +9,6 @@ const getAllCustomize = async (req: Request, res: Response): Promise<void> => {
 
     const skip = (page - 1) * limit;
 
-    // Search query using `$or` for multiple fields
     const sanitizedSearch = search.replace(/\s+/g, "");
 
     const query = search

@@ -111,10 +111,10 @@ const addCustomizeOrder = async (req: Request, res: Response): Promise<void> => 
 
 const customizekhalti = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { orderId } = req.body;
+      const { customizeOrderId } = req.body;
   
        // Fetch order details from DB & explicitly define populated type
-       const customizeOrder = await CustomizeOrder.findById(orderId).populate<{ clientId: { name: string; email: string } }>("clientId");
+       const customizeOrder = await CustomizeOrder.findById(customizeOrderId).populate<{ clientId: { name: string; email: string } }>("clientId");
   
       if (!customizeOrder) {
         res.status(404).json({ error: "CustomizeOrder not found" });
@@ -184,7 +184,7 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
   
   const customizeVerifyKhalti = async (req:Request, res:Response):Promise<void> => {
           try {
-            const { pidx, orderId } = req.body; 
+            const { pidx, customizeOrderId } = req.body; 
         
             // Verify payment with Khalti
             const verifyResponse = await fetch("https://a.khalti.com/api/v2/epayment/lookup/", {
@@ -205,7 +205,7 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
         
             // Update order status in database
             const order = await CustomizeOrder.findByIdAndUpdate(
-              orderId,
+              customizeOrderId,
               { paymentStatus: "paid"},
               { new: true }
             );
@@ -218,6 +218,60 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
               }
           }
   };
-      
+
+  const customizeCodOrder = async(req:Request,res:Response) =>{
+      try {
+          const{customizeOrderId} = req.body;
+          // Fetch order details from DB & explicitly define populated type
+          const order = await CustomizeOrder.findById(customizeOrderId).populate<{ clientId: { name: string; email: string } }>("clientId");
+  
+       if (!order) {
+         res.status(404).json({ error: "Order not found" });
+         return;
+       }
+   
+       if (!order.clientId) {
+         res.status(404).json({ success: false, message: "User not found" });
+         return;
+       }
+       order.paymentMethod = "COD"
+       order.paymentStatus = "pending"
+       await order.save()
+       res.status(200).json({success:true, message:"COD order", data:order})
+   
+      } catch (error) {
+          console.log(error)
+          if(error instanceof(Error)){
+              res.status(500).json({success:false, message:error.message})
+          }
+      }
+  }
+
+
+  
+  const updatePaymentStatus = async(req:Request,res:Response):Promise<void> =>{
+      try {
+          const {orderId} = req.body;
+          if(!orderId){
+              res.status(400).json({sucess:false, message:"Order ID is required"});
+              return
+          }
+          const order = await CustomizeOrder.findById(orderId);
+          if(!order){
+              res.status(404).json({sucess:false, message:"Order not found"});
+              return
+          }
+          order.paymentStatus = "paid"
+          await order.save();
+          res.status(200).json({sucess:true, message:"Payment status updated successfully"})
+      } catch (error) {
+          if(error instanceof(Error)){
+              res.status(500).json({sucess:false, message:error.message});
+              return
+          }
+          res.status(500).json({sucess:false, message:"Internal Server Error"})
+      }
+  }
+  
     
-      export {addCustomizeOrder,customizekhalti, customizeVerifyKhalti}
+      export {addCustomizeOrder,customizekhalti, customizeVerifyKhalti, customizeCodOrder, updatePaymentStatus}

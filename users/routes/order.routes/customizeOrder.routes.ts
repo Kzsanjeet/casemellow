@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
-import { addCustomizeOrder, customizekhalti, customizeVerifyKhalti } from "../../controllers/customizeOrder/addCustomizeOrder.controller";
+import { addCustomizeOrder, customizeCodOrder, customizekhalti, customizeVerifyKhalti, updatePaymentStatus } from "../../controllers/customizeOrder/addCustomizeOrder.controller";
+
 
 const addCustomizeOrderRouter = express.Router();
 
@@ -28,5 +29,13 @@ addCustomizeOrderRouter
 addCustomizeOrderRouter
   .route("/khalti/customize/verify")
   .post(customizeVerifyKhalti);
+
+  addCustomizeOrderRouter.post(
+    "/order/customize/cod/add-order",
+    upload.fields([{ name: "croppedImage", maxCount: 1 }]),
+    customizeCodOrder
+  );
+
+  addCustomizeOrderRouter.route("/order/customize/update-status/:orderId").patch(updatePaymentStatus)
 
 export { addCustomizeOrderRouter };

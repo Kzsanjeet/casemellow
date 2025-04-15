@@ -4,8 +4,9 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
 const loginUser = async(req:Request,res:Response):Promise<void> =>{
+   
     try {
-        const {email,password} = req.body;
+        const {email,password} = req.body;  
         if(!email || !password){
              res.status(400).json({success:false, message:"Email and password are required"})
              return
@@ -26,10 +27,25 @@ const loginUser = async(req:Request,res:Response):Promise<void> =>{
              res.status(400).json({success:false, message:"Failed to generate access token"})
              return
         }
+
+        const responseUser = {
+            id:user._id,
+            email:user.email,
+            name:user.name,
+            role:"admin"
+        }
     
         res.cookie("accessToken", accessToken, { httpOnly: true, maxAge: 1 * 60 * 60 * 1000 });
         
-        res.json({success:true, message:"Logged in successfully",accessToken})
+        res.json({
+            success: true,
+            message: "Logged in successfully",
+            data: {
+              jwt: accessToken,
+              user: responseUser
+            }
+          });
+          
         return
 
     } catch (error) {
@@ -38,8 +54,6 @@ const loginUser = async(req:Request,res:Response):Promise<void> =>{
     }
 }
 
-const updateAccessToken = () =>{
-    
-}
+
 
 export default loginUser

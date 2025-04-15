@@ -5,7 +5,7 @@ const getSpecificCustomize = async(req:Request,res:Response):Promise<void> =>{
     try {
         const {customizeId} = req.params;
         if(!customizeId){
-            res.status(404).json({success:false, message:"Product ID is required"});
+            res.status(404).json({success:false, message:"customize ID is required"});
             return
         }
         const product = await Customize.findById(customizeId).populate("brands","brandName");
