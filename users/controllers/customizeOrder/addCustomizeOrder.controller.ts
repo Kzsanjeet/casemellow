@@ -251,12 +251,12 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
   
   const updatePaymentStatus = async(req:Request,res:Response):Promise<void> =>{
       try {
-          const {orderId} = req.body;
-          if(!orderId){
+          const {customizeOrderId} = req.body;
+          if(!customizeOrderId){
               res.status(400).json({sucess:false, message:"Order ID is required"});
               return
           }
-          const order = await CustomizeOrder.findById(orderId);
+          const order = await CustomizeOrder.findById(customizeOrderId);
           if(!order){
               res.status(404).json({sucess:false, message:"Order not found"});
               return
