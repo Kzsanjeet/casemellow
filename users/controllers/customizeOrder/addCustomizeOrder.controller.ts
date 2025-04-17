@@ -249,29 +249,50 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
 
 
   
-  const updatePaymentStatus = async(req:Request,res:Response):Promise<void> =>{
-      try {
-          const {customizeOrderId} = req.body;
-          if(!customizeOrderId){
-              res.status(400).json({sucess:false, message:"Order ID is required"});
-              return
-          }
-          const order = await CustomizeOrder.findById(customizeOrderId);
-          if(!order){
-              res.status(404).json({sucess:false, message:"Order not found"});
-              return
-          }
-          order.paymentStatus = "paid"
-          await order.save();
-          res.status(200).json({sucess:true, message:"Payment status updated successfully"})
-      } catch (error) {
-          if(error instanceof(Error)){
-              res.status(500).json({sucess:false, message:error.message});
-              return
-          }
-          res.status(500).json({sucess:false, message:"Internal Server Error"})
+  // const updatePaymentStatus = async(req:Request,res:Response):Promise<void> =>{
+  //     try {
+  //         const {customizeOrderId} = req.body;
+  //         if(!customizeOrderId){
+  //             res.status(400).json({sucess:false, message:"Order ID is required"});
+  //             return
+  //         }
+  //         const order = await CustomizeOrder.findById(customizeOrderId);
+  //         if(!order){
+  //             res.status(404).json({sucess:false, message:"Order not found"});
+  //             return
+  //         }
+  //         order.paymentStatus = "paid"
+  //         await order.save();
+  //         res.status(200).json({sucess:true, message:"Payment status updated successfully"})
+  //     } catch (error) {
+  //         if(error instanceof(Error)){
+  //             res.status(500).json({sucess:false, message:error.message});
+  //             return
+  //         }
+  //         res.status(500).json({sucess:false, message:"Internal Server Error"})
+  //     }
+  // }
+
+  const updateCustomizePaymentStatus = async (req: Request, res: Response):Promise<void> => {
+    try {
+      const { orderId } = req.params;
+      console.log(orderId)
+      const order = await CustomizeOrder.findByIdAndUpdate(
+        orderId,
+        { $set: { paymentStatus: "paid" } },
+        { new: true }
+        );
+      if (!order) {
+        res.status(404).json({ error: "Order not found" });
+        return
       }
-  }
+      res.status(200).json({ message: "Payment status updated", data: order });
+    } catch (error) {
+      console.error("Update Payment Status Error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  
   
     
-      export {addCustomizeOrder,customizekhalti, customizeVerifyKhalti, customizeCodOrder, updatePaymentStatus}
+      export {addCustomizeOrder,customizekhalti, customizeVerifyKhalti, customizeCodOrder, updateCustomizePaymentStatus}
