@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { addCustomizeOrder, customizeCodOrder, customizekhalti, customizeVerifyKhalti, updateCustomizePaymentStatus} from "../../controllers/customizeOrder/addCustomizeOrder.controller";
+import { addCustomizeOrder, customizeCodOrder, customizekhalti, customizeVerifyKhalti, getAllCustomizeOrders, updateCustomizePaymentStatus} from "../../controllers/customizeOrder/addCustomizeOrder.controller";
 
 
 const addCustomizeOrderRouter = express.Router();
@@ -37,5 +37,7 @@ addCustomizeOrderRouter.post(
 );
 
 addCustomizeOrderRouter.route("/order/customize/update-status/:orderId").patch(updateCustomizePaymentStatus);
+
+addCustomizeOrderRouter.route("/order/customize/get").get(getAllCustomizeOrders)
 
 export { addCustomizeOrderRouter };
