@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { addCustomizeOrder, customizeCodOrder, customizekhalti, customizeVerifyKhalti, getAllCustomizeOrders, updateCustomizePaymentStatus} from "../../controllers/customizeOrder/addCustomizeOrder.controller";
+import { addCustomizeOrder, customizeCodOrder, customizekhalti, customizeVerifyKhalti, deleteCustomizeOrder, editCustomizeOrderStatus, editCustomizePaymentStatus, getAllCustomizeOrders, updateCustomizePaymentStatus} from "../../controllers/customizeOrder/addCustomizeOrder.controller";
 
 
 const addCustomizeOrderRouter = express.Router();
@@ -36,8 +36,13 @@ addCustomizeOrderRouter.post(
   customizeCodOrder
 );
 
-addCustomizeOrderRouter.route("/order/customize/update-status/:orderId").patch(updateCustomizePaymentStatus);
+addCustomizeOrderRouter.route("/order/customize/update-status/:customizeOrderId").patch(updateCustomizePaymentStatus);
 
 addCustomizeOrderRouter.route("/order/customize/get").get(getAllCustomizeOrders)
 
-export { addCustomizeOrderRouter };
+//for admin
+addCustomizeOrderRouter.route("/order/customize/payment/edit").patch(editCustomizePaymentStatus);
+addCustomizeOrderRouter.route("/order/customize/edit").patch(editCustomizeOrderStatus);
+addCustomizeOrderRouter.route("/order/customize/delete/:customizeOrderId").delete(deleteCustomizeOrder);
+
+export default addCustomizeOrderRouter;

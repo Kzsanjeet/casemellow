@@ -108,7 +108,6 @@ const addCustomizeOrder = async (req: Request, res: Response): Promise<void> => 
 };
 
 
-
 const customizekhalti = async (req: Request, res: Response): Promise<void> => {
     try {
       const { customizeOrderId } = req.body;
@@ -128,7 +127,7 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
   
       // Khalti payment payload
       const khaltiConfig = {
-        return_url: `${process.env.NEXT_BASE_URL}/order-success`,
+        return_url: `${process.env.NEXT_BASE_URL}/customize/order/success`,
         website_url: process.env.NEXT_BASE_URL,
         amount: customizeOrder.totalPrice * 100, // Convert to paisa
         purchase_order_id: customizeOrder._id.toString(),
@@ -183,9 +182,12 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
   
   
   const customizeVerifyKhalti = async (req:Request, res:Response):Promise<void> => {
+    console.log(
+      'test'
+    )
           try {
             const { pidx, customizeOrderId } = req.body; 
-        
+            console.log(customizeOrderId , "verify")
             // Verify payment with Khalti
             const verifyResponse = await fetch("https://a.khalti.com/api/v2/epayment/lookup/", {
               method: "POST",
@@ -203,14 +205,14 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
               return
             }
         
-            // Update order status in database
+            // // Update order status in database
             const order = await CustomizeOrder.findByIdAndUpdate(
               customizeOrderId,
               { paymentStatus: "paid"},
               { new: true }
             );
         
-            res.status(200).json({ message: "Payment successful", data: order });
+            res.status(200).json({ message: "Payment successful", data:order});
           } catch (error) {
               if(error instanceof(Error)){
                   console.error("Payment Verification Error:", error);
@@ -247,38 +249,12 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
       }
   }
 
-
-  
-  // const updatePaymentStatus = async(req:Request,res:Response):Promise<void> =>{
-  //     try {
-  //         const {customizeOrderId} = req.body;
-  //         if(!customizeOrderId){
-  //             res.status(400).json({sucess:false, message:"Order ID is required"});
-  //             return
-  //         }
-  //         const order = await CustomizeOrder.findById(customizeOrderId);
-  //         if(!order){
-  //             res.status(404).json({sucess:false, message:"Order not found"});
-  //             return
-  //         }
-  //         order.paymentStatus = "paid"
-  //         await order.save();
-  //         res.status(200).json({sucess:true, message:"Payment status updated successfully"})
-  //     } catch (error) {
-  //         if(error instanceof(Error)){
-  //             res.status(500).json({sucess:false, message:error.message});
-  //             return
-  //         }
-  //         res.status(500).json({sucess:false, message:"Internal Server Error"})
-  //     }
-  // }
-
   const updateCustomizePaymentStatus = async (req: Request, res: Response):Promise<void> => {
     try {
-      const { orderId } = req.params;
-      console.log(orderId)
+      const { customizeOrderId } = req.params;
+      console.log(customizeOrderId, "update")
       const order = await CustomizeOrder.findByIdAndUpdate(
-        orderId,
+        customizeOrderId,
         { $set: { paymentStatus: "paid" } },
         { new: true }
         );
@@ -348,7 +324,88 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
           res.status(500).json({ success: false, message: "Internal Server Error" });
       }
   };
+
+  //for admin
+
+const editCustomizePaymentStatus = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { customizeOrderId } = req.query;
+    const { paymentStatus } = req.body;
+
+    const updatedOrder = await CustomizeOrder.findByIdAndUpdate(
+      customizeOrderId,
+      { paymentStatus },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedOrder) {
+      res.status(404).json({ success: false, message: "Order not found" });
+      return;
+    }
+
+    res.status(200).json({ success: true, message: "Payment status updated successfully" });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+};
+
+
+const editCustomizeOrderStatus = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { customizeOrderId } = req.query;
+      const { orderStatus } = req.body;
   
+      const updatedOrder = await CustomizeOrder.findByIdAndUpdate(
+        customizeOrderId,
+        { orderStatus },
+        { new: true, runValidators: true }
+      );
   
+      if (!updatedOrder) {
+        res.status(404).json({ success: false, message: "Order not found" });
+        return;
+      }
+  
+      res.status(200).json({ success: true, message: "Payment status updated successfully" });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ success: false, message: error.message });
+      }
+    }
+  };
+
+
+ const deleteCustomizeOrder = async(req:Request,res:Response):Promise<void> =>{
+      try {
+          const customizeOrderId = req.params.customizeOrderId;
+  
+          if (!customizeOrderId || customizeOrderId.length !== 24) {
+              res.status(400).json({ success: false, message: "Invalid or missing order ID" });
+              return;
+          }
+          
+          const deleteOrder = await CustomizeOrder.findByIdAndDelete(customizeOrderId);
+          if(!deleteOrder){
+              res.status(404).json({success:false, message:"Order not found"})
+              return
+          }
+          res.status(200).json({success:true, message:"Order deleted successfully"})
+      } catch (error) {
+          console.log(error);
+          res.status(500).json({success:false, message:"Internal Server Error",error})
+          return
+      }
+  }
+  
+
     
-      export {addCustomizeOrder,customizekhalti, customizeVerifyKhalti, customizeCodOrder, updateCustomizePaymentStatus, getAllCustomizeOrders}
+export {
+   addCustomizeOrder,customizekhalti, 
+   customizeVerifyKhalti, 
+   customizeCodOrder, deleteCustomizeOrder,
+  getAllCustomizeOrders, 
+   editCustomizeOrderStatus, editCustomizePaymentStatus ,
+   updateCustomizePaymentStatus
+}  
