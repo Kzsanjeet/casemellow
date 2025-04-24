@@ -10,12 +10,12 @@ export interface AuthenticatedRequest extends Request {
 
 const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-      const { clientId, cartId, promoCode, number, pickUpAddress, deliveryAddress, totalPrice } = req.body;
+      const { clientId, cartId, promoCode, number, deliveryAddress, totalPrice } = req.body;
 
       // Validate required fields
       const missingFields = [];
       if (!cartId || cartId.length === 0) missingFields.push("cartId");
-      if (!pickUpAddress) missingFields.push("pickUpAddress");
+      // if (!pickUpAddress) missingFields.push("pickUpAddress");
       if (!deliveryAddress) missingFields.push("deliveryAddress");
       if (!totalPrice) missingFields.push("totalPrice");
       if (!number) missingFields.push("number");
@@ -99,7 +99,7 @@ const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void>
           clientId,
           productId: products,
           cartId,
-          pickUpAddress,
+          // pickUpAddress,
           deliveryAddress,
           number,
           totalQuantity,
