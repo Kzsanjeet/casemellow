@@ -18,6 +18,7 @@ const registerClient = new Schema({
         required: true,
         minlength: 6 
     },
+    verified:{type:Boolean,default: false},
     otp:{
         type:String,
         default:""

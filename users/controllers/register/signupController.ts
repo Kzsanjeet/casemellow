@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import Client from "../../../admin/models/signup.models/client";
+import jwt from "jsonwebtoken";
+import verifyEmailMail from "../../../middleware/nodemailer";
 
 
 const registerUser = async (req: Request, res: Response): Promise<void> => {
@@ -27,6 +29,17 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
       number,
       password: hashedPassword,
     });
+
+    const verifyToken = await jwt.sign(
+      { id: createdUser._id, email: createdUser.email },
+      process.env.ACCESS_SECRET_KEY as string,
+      { expiresIn: "1d" }
+  );
+
+  verifyEmailMail(
+    createdUser.email,
+    verifyToken
+  )
 
     res.status(201).json({
       success: true,
