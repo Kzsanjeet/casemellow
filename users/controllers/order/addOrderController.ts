@@ -3,6 +3,9 @@ import Order from "../../../admin/models/order.models/order";
 import Offer from "../../../admin/models/offer.models/offer";
 import Product from "../../../admin/models/product.models/productModels";
 import Cart from "../../models/cart/cart.models";
+import generateOtp from "../../../middleware/generateOrderId";
+import Client from "../../../admin/models/signup.models/client";
+import sendOrderConfirmationMail from "../../../middleware/mailOrder";
 
 export interface AuthenticatedRequest extends Request {
     user?: { clientId: string }; 
@@ -113,6 +116,9 @@ const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void>
           return;
       }
 
+      createOrder.trackOrderId = generateOtp(6);
+      await createOrder.save()
+
       // Update product order count
       for (let item of products) {
           const product = await Product.findById(item.product);
@@ -211,42 +217,44 @@ const khalti = async (req: Request, res: Response): Promise<void> => {
 };
 
 
-const verifyKhalti = async (req:Request, res:Response):Promise<void> => {
-        try {
-          const { pidx, orderId } = req.body; 
-      
-          // Verify payment with Khalti
-          const verifyResponse = await fetch("https://a.khalti.com/api/v2/epayment/lookup/", {
-            method: "POST",
-            headers: {
-              Authorization: `Key ${process.env.NEXT_PUBLIC_KHALTI_SECRET_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ pidx }),
-          });
-      
-          const verifyData = await verifyResponse.json();
-      
-          if (!verifyResponse.ok || verifyData.status !== "Completed") {
-            res.status(400).json({ error: "Payment verification failed", details: verifyData });
-            return
-          }
-      
-          // Update order status in database
-          const order = await Order.findByIdAndUpdate(
-            orderId,
-            { paymentStatus: "paid"},
-            { new: true }
-          );
-      
-          res.status(200).json({ message: "Payment successful", data: order });
-        } catch (error) {
-            if(error instanceof(Error)){
-                console.error("Payment Verification Error:", error);
-                res.status(500).json({ error: "Internal Server Error", details: error.message });
-            }
-        }
+const verifyKhalti = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { pidx, orderId } = req.body;
+
+    // Verify payment with Khalti
+    const verifyResponse = await fetch("https://a.khalti.com/api/v2/epayment/lookup/", {
+      method: "POST",
+      headers: {
+        Authorization: `Key ${process.env.NEXT_PUBLIC_KHALTI_SECRET_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pidx }),
+    });
+
+    const verifyData = await verifyResponse.json();
+
+    if (!verifyResponse.ok || verifyData.status !== "Completed") {
+      res.status(400).json({ error: "Payment verification failed", details: verifyData });
+      return;
+    }
+
+    // Update order payment status
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      { paymentStatus: "paid" },
+      { new: true }
+    );
+
+    
+    res.status(200).json({ message: "Payment successful", data: order });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Payment Verification Error:", error);
+      res.status(500).json({ error: "Internal Server Error", details: error.message });
+    }
+  }
 };
+
     
   
     export {addOrder,khalti, verifyKhalti}

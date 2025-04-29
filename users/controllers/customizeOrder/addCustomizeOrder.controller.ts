@@ -3,6 +3,9 @@ import CustomizeOrder from "../../../admin/models/order.models/customizeOrder";
 import { AuthenticatedRequest } from "../order/addOrderController";
 import Customize from "../../../admin/models/customize.models/customize";
 import { uploadFile } from "../../../utility/cloudinary";
+import generateOtp from "../../../middleware/generateOrderId";
+import Client from "../../../admin/models/signup.models/client";
+import sendOrderConfirmationMail from "../../../middleware/mailOrder";
 
 
 export interface MulterRequest extends Request {
@@ -90,12 +93,15 @@ const addCustomizeOrder = async (req: Request, res: Response): Promise<void> => 
             totalPrice,
             orderStatus: "pending",
             paymentStatus: "pending",
+            trackOrderId: generateOtp(6)
         });
 
         if (!createOrder) {
             res.status(500).json({ success: false, message: "Unable to create order" });
             return;
         }
+
+        await createOrder.save()
 
         res.status(201).json({ success: true, message: "Order confirmed", data: createOrder });
     } catch (error) {
@@ -239,6 +245,20 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
        order.paymentMethod = "COD"
        order.paymentStatus = "pending"
        await order.save()
+
+       const sendOrderId = await CustomizeOrder.findById(customizeOrderId);
+
+       if (sendOrderId) {
+       const getClientEmail = await Client.findById(sendOrderId.clientId); // <-- await added
+
+       if (!getClientEmail) {
+           res.status(404).json({ success: false, message: "Unable to get client id." });
+           return; // <-- added return
+       }
+
+       await sendOrderConfirmationMail(getClientEmail.email, sendOrderId.trackOrderId); // <-- await recommended
+       }
+       
        res.status(200).json({success:true, message:"COD order", data:order})
    
       } catch (error) {
@@ -262,6 +282,18 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
         res.status(404).json({ error: "Order not found" });
         return
       }
+      const sendOrderId = await CustomizeOrder.findById(customizeOrderId);
+
+      if (sendOrderId) {
+      const getClientEmail = await Client.findById(sendOrderId.clientId); // <-- await added
+
+      if (!getClientEmail) {
+          res.status(404).json({ success: false, message: "Unable to get client id." });
+          return; // <-- added return
+      }
+
+      await sendOrderConfirmationMail(getClientEmail.email, sendOrderId.trackOrderId); // <-- await recommended
+      }
       res.status(200).json({ message: "Payment status updated", data: order });
     } catch (error) {
       console.error("Update Payment Status Error:", error);
@@ -278,12 +310,13 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
   
           const query: any = {};
   
-          // Search by product name or client name
-          if (search && typeof search === "string") {
+            // Search by payment status, order status, payment method, or delivery address
+            if (search && typeof search === "string") {
               query.$or = [
                   { paymentStatus: { $regex: search, $options: "i" } },
                   { orderStatus: { $regex: search, $options: "i" } },
-                  {paymentMethod:{$regex: search, $options: "i"}}
+                  { paymentMethod: { $regex: search, $options: "i" } },
+                  { deliveryAddress: { $regex: search, $options: "i" } },
               ];
           }
   
@@ -293,7 +326,7 @@ const customizekhalti = async (req: Request, res: Response): Promise<void> => {
           }
   
           // Sorting logic
-          let sortOptions: any = {};
+          let sortOptions: any = {orderDate: -1};
           if (sort === "asc") sortOptions.orderDate = 1;
           else if (sort === "desc") sortOptions.orderDate = -1;
   

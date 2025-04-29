@@ -72,6 +72,7 @@ const verifyEmailMail = async (email:string, token:string) => {
         </html>
       `,
     };
+    
   
     return new Promise((resolve, reject) => {
       transporter.sendMail(mailOptions, (error, info) => {
@@ -84,6 +85,8 @@ const verifyEmailMail = async (email:string, token:string) => {
   }
   );
   };
+
+  
 
 
   export default verifyEmailMail;

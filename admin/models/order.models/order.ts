@@ -69,6 +69,10 @@ const orderSchema = new Schema(
       type: Number,
       required: true,
     },
+    trackOrderId :{
+        type:String,
+        default:""
+      }
   },
   {
     timestamps: true,

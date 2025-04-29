@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import Order from "../../../admin/models/order.models/order";
+import Client from "../../../admin/models/signup.models/client";
+import sendOrderConfirmationMail from "../../../middleware/mailOrder";
 
 const updatePaymentStatus = async(req:Request,res:Response):Promise<void> =>{
     try {
@@ -15,6 +17,20 @@ const updatePaymentStatus = async(req:Request,res:Response):Promise<void> =>{
         }
         order.paymentStatus = "paid"
         await order.save();
+        
+        const sendOrderId = await Order.findById(orderId);
+
+        if (sendOrderId) {
+        const getClientEmail = await Client.findById(sendOrderId.clientId); // <-- await added
+
+        if (!getClientEmail) {
+            res.status(404).json({ success: false, message: "Unable to get client id." });
+            return; // <-- added return
+        }
+
+        await sendOrderConfirmationMail(getClientEmail.email, sendOrderId.trackOrderId); // <-- await recommended
+        }
+
         res.status(200).json({sucess:true, message:"Payment status updated successfully"})
     } catch (error) {
         if(error instanceof(Error)){
