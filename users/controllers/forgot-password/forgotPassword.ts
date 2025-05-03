@@ -74,6 +74,12 @@ export const passwordChange = async (req: Request, res: Response):Promise<void> 
 
    res.status(200).json({
     success: true,
-    message: "Password changed successfully"
+    message: "Password changed successfully",
+    data: {
+        _id: existingUser._id,
+        name: existingUser.name,
+        email: existingUser.email,
+        number: existingUser.number
+      }
   });
 };

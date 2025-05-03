@@ -59,6 +59,7 @@ const passwordResetMail = async (email:string, token:string) => {
             .button-wrapper {
               text-align: center;
               margin: 30px 0;
+              color:rgb(255, 255, 255);
             }
             .button {
               background-color:rgb(175, 40, 30);
@@ -83,7 +84,7 @@ const passwordResetMail = async (email:string, token:string) => {
             
             <!-- Logo Header -->
             <div class="header">
-              <img src="${process.env.LOGO_URL}" alt="Casemellow">
+             <h1 classname ="text-white">Casemellow</h1>
             </div>
             
             <!-- Main Content -->
