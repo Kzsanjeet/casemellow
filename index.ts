@@ -49,7 +49,7 @@ app.get("/",(req:Request, res:Response)=>{
 app.use(express.json())
 app.use(cors(
     {
-        origin: ["http://localhost:3000","https://casemellow-client.vercel.app"],
+        origin: ["http://localhost:3000","https://casemellow.vercel.app"],
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
         allowedHeaders: ["Content-Type", "Authorization"],
