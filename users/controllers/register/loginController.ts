@@ -33,12 +33,19 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
+        // res.cookie("accessToken", accessToken, {
+        //     httpOnly: true,
+        //     secure: false,  // Don't use HTTPS in development
+        //     sameSite: "strict",
+        //     maxAge: 60 * 60 * 1000,
+        // });
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: false,  // Don't use HTTPS in development
-            sameSite: "strict",
+            secure: true,         // ✅ must be true on HTTPS (production)
+            sameSite: "none",     // ✅ allows cross-origin cookies
             maxAge: 60 * 60 * 1000,
         });
+        
         
         res.json({
             success: true,

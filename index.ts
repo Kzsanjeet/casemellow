@@ -56,7 +56,7 @@ app.use(cors(
     }
 ))
 app.use(urlencoded({extended:true}))
-app.use(cookieParser())
+app.use(cookieParser()) 
 
 // routes
 app.use("/api/v1",
