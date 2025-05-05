@@ -11,7 +11,11 @@ const getSpecificProduct = async(req:Request,res:Response):Promise<void> =>{
         const product = await Product.findById(productId);
         if(!product){
             res.status(404).json({success:false, message:'Product not found'});
+            return
         }
+        product.productView += 1;
+        await product.save();
+        
         res.status(200).json({success:true, message:"Product detail fetched properly",data:product});
     } catch (error) {
         console.log(error);

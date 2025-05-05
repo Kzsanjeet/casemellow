@@ -10,3 +10,8 @@
   "include": ["**/*"] // Matches all files in the project directory
 }
 
+// "scripts": {
+//   "test": "echo \"Error: no test specified\" && exit 1",
+//   "start": "ts-node index.ts",
+//   "dev": "nodemon --watch . --exec ts-node index.ts"
+// },
