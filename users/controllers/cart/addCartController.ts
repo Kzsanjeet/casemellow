@@ -22,7 +22,7 @@ const addToCart = async (req: AuthenticatedRequest, res: Response): Promise<void
         }
 
         // Check if the product is already in the cart for the same user
-        const existingCartItem = await Cart.findOne({ clientId, phoneModel, coverType });
+        const existingCartItem = await Cart.findOne({ clientId, phoneModel, coverType, productId });
 
         if (existingCartItem) {
             existingCartItem.quantity += quantity;

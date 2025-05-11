@@ -163,8 +163,8 @@ const khalti = async (req: Request, res: Response): Promise<void> => {
 
     // Khalti payment payload
     const khaltiConfig = {
-      return_url: `${process.env.NEXT_BASE_URL}/order-success`,
-      website_url: process.env.NEXT_BASE_URL,
+      return_url: `${process.env.NEXT_BASE_URL || process.env.PROD_URL}/order-success`,
+      website_url: process.env.NEXT_BASE_URL || process.env.PROD_URL,
       amount: order.totalPrice * 100, // Convert to paisa
       purchase_order_id: order._id.toString(),
       purchase_order_name: order.clientId.name ||"Casemellow Order",
