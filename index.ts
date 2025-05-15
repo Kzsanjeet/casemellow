@@ -37,6 +37,7 @@ import { customizeRouter } from "./admin/routes/customize.routes/customizeRoutes
 import addCustomizeOrderRouter from "./users/routes/order.routes/customizeOrder.routes";
 import forgotPasswordRouter from "./users/routes/forgot-password.routes/forgot-passwordRoutes";
 import adminForgotPasswordRouter from "./admin/routes/forgot.routes/forgot-route";
+import dashboardRouter from "./admin/routes/dashboard.routes/dashboard.routes";
 
 dotenv.config()
 const app =  express()
@@ -119,7 +120,10 @@ app.use("/api/v1",
 
     //forgot-password
     forgotPasswordRouter,
-    adminForgotPasswordRouter
+    adminForgotPasswordRouter,
+
+    //dashboard
+    dashboardRouter
 )
 
 
