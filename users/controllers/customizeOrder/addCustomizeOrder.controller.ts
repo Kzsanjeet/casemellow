@@ -23,14 +23,14 @@ const addCustomizeOrder = async (req: Request, res: Response): Promise<void> => 
             phoneModel,
             number,
             coverType,
-            pickUpAddress,
+            // pickUpAddress,
             deliveryAddress,
             totalPrice,
         } = AuthenticatedReq.body;
 
         const missingFields = [];
         if (!customizeId) missingFields.push("customizeId");
-        if (!pickUpAddress) missingFields.push("pickUpAddress");
+        // if (!pickUpAddress) missingFields.push("pickUpAddress");
         if (!deliveryAddress) missingFields.push("deliveryAddress");
         if (!totalPrice) missingFields.push("totalPrice");
         if (!number) missingFields.push("number");
@@ -87,7 +87,7 @@ const addCustomizeOrder = async (req: Request, res: Response): Promise<void> => 
             clientId,
             customize: customizeId,
             croppedImage:uploadedImage.secure_url || "",
-            pickUpAddress,
+            // pickUpAddress,
             deliveryAddress,
             number,
             totalPrice,

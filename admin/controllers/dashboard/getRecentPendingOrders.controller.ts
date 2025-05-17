@@ -21,7 +21,7 @@ const getRecentPendingOrders = async(req:Request,res:Response):Promise<void> =>{
             res.status(500).json({success:false, message:error.message})
         }
     }
-}
+}   
 
 
 const getRecentPendingCustomizeOrders = async(req:Request,res:Response):Promise<void> =>{
@@ -31,7 +31,7 @@ const getRecentPendingCustomizeOrders = async(req:Request,res:Response):Promise<
             orderStatus: "pending",
                     }).limit(3).sort({
                         createdAt: -1
-                    })
+                    }).select("trackOrderId ")
             // CustomizeOrder.countDocuments({orderStatus:"pending"})
         if(getRecentPending.length === 0){
             res.status(200).json({success:true, message:"No pending orders found", data:{}})
