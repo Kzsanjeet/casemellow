@@ -7,7 +7,7 @@ const getAllProduct = async (req: Request, res: Response): Promise<void> => {
         const page = Math.max(1, parseInt(req.query.page as string) || 1);
         const limit = Math.max(1, parseInt(req.query.limit as string) || 8);
         const skip = (page - 1) * limit;
-        const { search, sort, category, brand, isActive } = req.query || "".toLowerCase().trim();
+        const { search, sort, category, phoneModel, brand, isActive } = req.query || "".toLowerCase().trim();
   
         const query: any = {};
 
@@ -30,6 +30,7 @@ const getAllProduct = async (req: Request, res: Response): Promise<void> => {
         }
 
         if (category) query.productCategory = category;
+        if(phoneModel) query.phoneModel = phoneModel;
 
         if (brand) {
             const brandDoc = await Brand.findOne({ brandName: { $regex: brand as string, $options: "i" } });
