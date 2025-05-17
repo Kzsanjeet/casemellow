@@ -9,7 +9,7 @@ const getBestSellingProduct = async (req: Request, res: Response): Promise<void>
 
         const query = {
         ordersNumber:{
-                $gte: 1
+                $gte: 3
             }
         }
         // Fetch only products with sells >= 1 and apply pagination

@@ -9,7 +9,7 @@ const getPopularProduct = async (req: Request, res: Response): Promise<void> => 
 
         const query = {
             productView:{
-                $gte: 2
+                $gte: 5
             }
         }
         // Fetch only products with views >= 3 and apply pagination
