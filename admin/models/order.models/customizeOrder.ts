@@ -19,11 +19,11 @@ const customizeOrderSchema = new Schema(
       type: Number,
       required: true,
     },
-    pickUpAddress: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    // pickUpAddress: {
+    //   type: String,
+    //   required: true,
+    //   trim: true,
+    // },
     deliveryAddress: {
       type: String,
       required: true,

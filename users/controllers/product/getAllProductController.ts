@@ -30,6 +30,7 @@ const getAllProduct = async (req: Request, res: Response): Promise<void> => {
         }
 
         if (category) query.productCategory = category;
+        
         if(phoneModel) query.phoneModel = phoneModel;
 
         if (brand) {
