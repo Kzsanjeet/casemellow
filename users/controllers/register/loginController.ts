@@ -41,10 +41,11 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
         // });
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: true,         // ✅ must be true on HTTPS (production)
-            sameSite: "none",     // ✅ allows cross-origin cookies
+            secure: true,         // requires HTTPS
+            sameSite: "none",     // allows cross-origin cookies
             maxAge: 60 * 60 * 1000,
         });
+
         
         
         res.json({
