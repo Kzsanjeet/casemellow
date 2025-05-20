@@ -21,9 +21,10 @@ const addProduct = async (req: Request, res: Response): Promise<void> => {
       productDescription,
       productPrice,
       productCategory,
+      discount
     } = MulterReq.body;
 
-    if (!productName || !brands || !productDescription || !productPrice || !productCategory || !phoneModel || !coverTypes) {
+    if (!productName || !brands || !productDescription || !productPrice || !productCategory || !phoneModel || !coverTypes ||!discount) {
       res.status(400).json({ success: false, message: "Please fill all the fields" });
       return;
     }
@@ -61,6 +62,7 @@ const addProduct = async (req: Request, res: Response): Promise<void> => {
       // coverType: coverTypes,  
       productDescription,
       productPrice,
+      discount,
       productImage: uploadedImage.secure_url || "",
       productCategory,
     })

@@ -132,6 +132,8 @@ const passwordResetMail = async (email:string, token:string) => {
         <!-- Footer -->
         <div class="footer">
           © ${new Date().getFullYear()} Casemellow. All rights reserved.
+           <p style="margin: 4px 0 0;">Kathmandu, Nepal</p>
+           <p style="margin: 4px 0 0;">9843928450</p>
         </div>
       </div>
     </body>

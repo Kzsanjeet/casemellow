@@ -18,16 +18,11 @@ const editSpecificProduct = async (req: Request, res: Response): Promise<void> =
       coverType,
       productDescription,
       productPrice,
+      discount,
       productCategory,
     } = MulterReq.body;
 
-    // Check required fields
-    if (!productName || !brands || !productDescription || !productPrice || !productCategory || !phoneModel) {
-      res.status(400).json({ success: false, message: "Please fill all the required fields." });
-      return;
-    }
-
-    // Parse coverType
+   // Parse coverType
     let parsedCoverType;
     try {
       parsedCoverType = JSON.parse(coverType);
@@ -69,6 +64,7 @@ const editSpecificProduct = async (req: Request, res: Response): Promise<void> =
           coverType: parsedCoverType,
           productDescription,
           productPrice,
+          discount,
           productCategory,
           productImage: productImageUrl,
         },

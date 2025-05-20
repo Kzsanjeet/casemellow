@@ -54,6 +54,7 @@ const sendOrderConfirmationMail = async (email: string, orderId: string) => {
                   <td style="background-color: #f1f1f1; text-align: center; padding: 20px; font-size: 12px; color: #888;">
                     <p style="margin: 0;">&copy; ${new Date().getFullYear()} Casemellow. All rights reserved.</p>
                     <p style="margin: 4px 0 0;">Kathmandu, Nepal</p>
+                    <p style="margin: 4px 0 0;">9843928450</p>
                   </td>
                 </tr>
 
