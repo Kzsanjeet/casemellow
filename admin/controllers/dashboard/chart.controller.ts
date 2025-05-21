@@ -14,6 +14,7 @@ const getTotalOrders = async (req: Request, res: Response): Promise<void> => {
       months.map(async (monthMoment) => {
         const start = monthMoment.toDate();
         const end = moment(monthMoment).endOf("month").toDate();
+        // start and end: Get the start and end dates of the month as JavaScript Date objects.
 
         const [normalCount, customCount] = await Promise.all([
           Order.countDocuments({

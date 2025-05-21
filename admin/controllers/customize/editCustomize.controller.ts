@@ -22,9 +22,7 @@ const editCustomize = async (req: Request, res: Response): Promise<void> => {
 
     console.log(MulterReq.body)
 
-    // Extract product ID from request params
     const { customizeId } = req.params;
-    console.log(customizeId)
     // Find the existing product to update
     const product = await Customize.findById(customizeId);
     if (!product) {

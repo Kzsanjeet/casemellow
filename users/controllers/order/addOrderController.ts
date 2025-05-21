@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Order from "../../../admin/models/order.models/order";
-import Offer from "../../../admin/models/offer.models/offer";
 import Product from "../../../admin/models/product.models/productModels";
 import Cart from "../../models/cart/cart.models";
 import generateOtp from "../../../middleware/generateOrderId";
@@ -13,12 +12,11 @@ export interface AuthenticatedRequest extends Request {
 
 const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-      const { clientId, cartId, promoCode, number, deliveryAddress, totalPrice } = req.body;
+      const { clientId, cartId, number, deliveryAddress, totalPrice } = req.body;
 
       // Validate required fields
       const missingFields = [];
       if (!cartId || cartId.length === 0) missingFields.push("cartId");
-      // if (!pickUpAddress) missingFields.push("pickUpAddress");
       if (!deliveryAddress) missingFields.push("deliveryAddress");
       if (!totalPrice) missingFields.push("totalPrice");
       if (!number) missingFields.push("number");
@@ -84,19 +82,6 @@ const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void>
           return;
       }
 
-      // Apply promo code
-      let finalPrice = totalPrice;
-      if (promoCode) {
-          const promo = await Offer.findOne({ promoCode });
-          if (!promo) {
-              res.status(400).json({ success: false, message: "Invalid promo code" });
-              return;
-          }
-          const discountAmount = promo.discount || 0;
-          const maxDiscount = totalPrice * 0.5;
-          finalPrice = Math.max(totalPrice - Math.min(discountAmount, maxDiscount), 0);
-      }
-
       // Create new order
       const createOrder = await Order.create({
           clientId,
@@ -106,7 +91,7 @@ const addOrder = async (req: AuthenticatedRequest, res: Response): Promise<void>
           deliveryAddress,
           number,
           totalQuantity,
-          totalPrice: finalPrice,
+          totalPrice,
           orderStatus: "pending",
           paymentStatus: "pending",
       });
